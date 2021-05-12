@@ -11,13 +11,13 @@ class AuthController
     {
         $credentials = $request->only('email', 'password');
 
-        if (Auth::attempt($credentials)) {
+        if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
 
             return response()->json(['success' => true, 'user' => $request->user()]);
         }
 
-        return response()->json(['success' => false], 401);
+        return response()->json(['success' => false, 'message' => '帳號或密碼不符'], 401);
     }
 
     public function logout(Request $request)
