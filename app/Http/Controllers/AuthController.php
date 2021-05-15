@@ -7,6 +7,11 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController
 {
+    public function me(Request $request)
+    {
+        return response()->json(['success' => true, 'user' => $request->user()]);
+    }
+
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
