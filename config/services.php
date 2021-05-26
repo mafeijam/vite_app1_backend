@@ -30,4 +30,19 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'cf' => [
+        'token' => env('CF_TOKEN'),
+        'zone' => env('CF_ZONE'),
+        'dns' => env('CF_DNS')
+    ],
+
+    'dg' => [
+        'token' => env('DG_TOKEN')
+    ],
+
+    'telegram-bot-api' => [
+        'token' => env('TELEGRAM_BOT_TOKEN'),
+        'chat_id' => env('TELEGRAM_BOT_CHAT')
+    ],
+
 ];

@@ -1,5 +1,6 @@
 <?php
 
+use Monolog\Logger;
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
@@ -37,7 +38,7 @@ return [
     'channels' => [
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['single'],
+            'channels' => ['custom_error', 'custom_info'],
             'ignore_exceptions' => false,
         ],
 
@@ -100,6 +101,10 @@ return [
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
+
+        'custom_error' => create_logger_config(Logger::ERROR, 'logs/errors.log'),
+
+        'custom_info' => create_logger_config(Logger::INFO, 'logs/info.log'),
     ],
 
 ];

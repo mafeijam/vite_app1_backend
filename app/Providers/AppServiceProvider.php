@@ -23,14 +23,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $host = request()->getHost();
-
-        if (str_contains($host, 'jamwong.me')) {
-            config([
-                'app.url' => 'https://'.$host,
-                'session.domain' => $host,
-                'sanctum.stateful' => [$host],
-            ]);
-        }
+        //
     }
 }
