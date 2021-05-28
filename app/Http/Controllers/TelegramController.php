@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\API\Telegram\TelegramBot;
 use App\Events\TwoFactorAnswered;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class TelegramController
 {
@@ -40,6 +42,20 @@ class TelegramController
         }
 
         Log::channel('telegram')->info('debug', $request->all());
+
+        return 'ok';
+    }
+
+    public function webhookMini(Request $request)
+    {
+        $update = $request->all();
+
+        Storage::put('tg/jw_mini.'.date('Ymd.His').'.json', json_encode($update, JSON_PRETTY_PRINT));
+
+        $bot = new TelegramBot('jw_mini');
+        $result = $bot->handleUpdate($update);
+
+        Log::channel('telegram')->info('jw_mini', [$result]);
 
         return 'ok';
     }

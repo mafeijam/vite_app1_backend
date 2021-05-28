@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use NotificationChannels\Telegram\TelegramChannel;
+use NotificationChannels\Telegram\TelegramFile;
 use NotificationChannels\Telegram\TelegramMessage;
 
 class Telegram extends Notification
@@ -21,22 +22,9 @@ class Telegram extends Notification
 
     public function toTelegram()
     {
-        $token = Str::random();
-
-        return TelegramMessage::create()
-            ->to(config('services.telegram-bot-api.chat_id'))
+        return TelegramFile::create()
+            ->to('748333103')
             ->content($this->message)
-            ->options([
-                'reply_markup' => json_encode([
-                    'inline_keyboard' => [[[
-                        'text' => 'OK',
-                        'callback_data' => json_encode(['type' => 'OK', 'token' => $token])
-                    ],
-                    [
-                        'text' => 'DENY',
-                        'callback_data' => json_encode(['type' => 'DENY', 'token' => $token])
-                    ]]]
-                ])
-            ]);
+            ->document(storage_path('/app/csl.pdf'), 'csl.pdf');
     }
 }

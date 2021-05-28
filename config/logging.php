@@ -106,6 +106,8 @@ return [
 
         'custom_info' => create_logger_config(Logger::INFO, 'logs/info.log'),
 
+        'debug' => create_logger_config(Logger::DEBUG, 'logs/debug.log'),
+
         'telegram' => create_logger_config(Logger::INFO, 'logs/telegram.log'),
     ],
 

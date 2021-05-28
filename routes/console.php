@@ -1,11 +1,14 @@
 <?php
 
+use App\API\Telegram\TelegramBot;
 use App\Events\TestEvent;
 use App\Models\User;
 use App\Notifications\Telegram;
 use App\Notifications\TestNotification;
+use Illuminate\Mail\Mailer;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 
 Artisan::command('init', function () {
    User::create([
@@ -21,5 +24,18 @@ Artisan::command('test', function () {
 });
 
 Artisan::command('telegram', function () {
-    User::find(1)->notify(new Telegram('yo testing'));
+    $t = (new Telegram('yo testing'))->toTelegram();
+
+    dump($t->toArray());
+});
+
+Artisan::command('telegram-test', function () {
+    $bot = new TelegramBot;
+
+    $res = $bot->sendDocument([
+        'chat_id' => '748333103',
+        'contents' => fopen(storage_path('app/csl.pdf'), 'rb')
+    ]);
+
+    dump($res);
 });
