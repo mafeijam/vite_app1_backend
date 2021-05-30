@@ -2,13 +2,11 @@
 
 namespace App\API\Telegram\Traits;
 
-use Illuminate\Support\Arr;
-
 trait APIMethodsTrait
 {
-    public function setWebhook()
+    public function setWebhook($url = null)
     {
-        $base = config('app.url');
+        $base = $url ?? config('app.url');
         $webhook = config("telegrambot.bots.{$this->name}.webhook");
 
         return $this->call('setWebhook', [
@@ -37,10 +35,7 @@ trait APIMethodsTrait
 
     public function sendDocument($params)
     {
-        $path = Arr::pull($params, 'path');
-        $contents = Arr::pull($params, 'contents');
-
-        return $this->callFile('sendDocument', 'document', $path, $contents, $params);
+        return $this->callFile('sendDocument', 'document', $params);
     }
 
     public function answerCallbackQuery($params)

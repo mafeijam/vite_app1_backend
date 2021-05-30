@@ -4,6 +4,7 @@ namespace App\API\Telegram;
 
 use App\API\Telegram\Traits\APIMethodsTrait;
 use App\API\Telegram\Traits\HandleCommandTrait;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 
 class TelegramBot
@@ -48,8 +49,11 @@ class TelegramBot
         return Http::post($this->endpoint($method), $params)->json();
     }
 
-    protected function callFile($method, $name, $contents, $filename = null, array $params = [])
+    protected function callFile($method, $name, array $params = [])
     {
+        $contents = Arr::pull($params, 'contents');
+        $filename = Arr::pull($params, 'filename');
+
         return Http::attach($name, $contents, $filename)
             ->post($this->endpoint($method), $params)->json();
     }

@@ -29,8 +29,8 @@ Artisan::command('telegram', function () {
     dump($t->toArray());
 });
 
-Artisan::command('telegram-test', function () {
-    $bot = new TelegramBot;
+Artisan::command('telegram-test', function (TelegramBot $bot) {
+    // $bot = new TelegramBot;
 
     $res = $bot->sendDocument([
         'chat_id' => '748333103',

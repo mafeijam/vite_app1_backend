@@ -41,14 +41,11 @@ trait HandleCommandTrait
             return (new $class($update, $this))->handle();
         }
 
-        $reply = $message->reply_to_message ?? null;
-
-        if ($reply) {
-            $messageId = $reply->message_id;
+        if ($reply = $message->reply_to_message) {
             $command = ReplyMap::command($reply->text);
 
             if (class_exists($command)) {
-                return (new $command($update, $this))->handle($messageId);
+                return (new $command($update, $this))->handle();
             }
         }
 
@@ -72,7 +69,11 @@ trait HandleCommandTrait
 
     protected function getCommandClass($command)
     {
-        return $this->namespace . ucfirst(ltrim($command, '/')) . 'Command';
+        if (str_starts_with($command, '/')) {
+            return $this->namespace . ucfirst(ltrim($command, '/')) . 'Command';
+        }
+
+        return null;
     }
 
     public function getLocalCommands()
