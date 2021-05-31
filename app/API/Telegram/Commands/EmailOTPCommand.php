@@ -6,23 +6,14 @@ use App\API\Telegram\BaseCommand;
 use App\API\Telegram\ReplyMap;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Log;
 
 class EmailOTPCommand extends BaseCommand
 {
     public function handle()
     {
-        $otp = mt_rand(1000, 9999);
-
         $email = $this->verifyEmail();
 
-        $expiry = now()->addMinutes(10);
-
-        if ($email) {
-            Mail::raw($otp, fn ($message) => $message->to($email));
-            Cache::put('tg.otp.'.$this->chatId(), $otp, $expiry);
-            Cache::put('tg.email.'.$this->chatId(), $email, $expiry);
-        }
+        $this->generateOTP($email);
 
         $result = $this->sendMessage([
             'chat_id' => $this->chatId(),
@@ -32,26 +23,31 @@ class EmailOTPCommand extends BaseCommand
             ])
         ]);
 
-        Log::channel('debug')->info('bot result', [$result]);
-
-        return class_basename($this);
+        return $this->result($result, $email ? VerifyOTPCommand::class : self::class);
     }
 
     protected function verifyEmail()
     {
         $text = $this->update->message->text;
 
-        $email = null;
-
         $entities = $this->update->message->entities ?? [];
+        $entitie = collect($entities)->first(fn ($e) => $e->type === 'email');
 
-        foreach ($entities as $entitie) {
-            if ($entitie->type === 'email') {
-                $email = substr($text, $entitie->offset, $entitie->length);
-                break;
-            }
+        if ($entitie) {
+            return substr($text, $entitie->offset, $entitie->length);
         }
 
-        return $email;
+        return null;
+    }
+
+    protected function generateOTP($email)
+    {
+        if ($email) {
+            $expiry = now()->addMinutes(10);
+            $otp = mt_rand(100000, 999999);
+            Mail::raw($otp, fn ($message) => $message->to($email));
+            Cache::put('tg.otp.'.$this->chatId(), $otp, $expiry);
+            Cache::put('tg.email.'.$this->chatId(), $email, $expiry);
+        }
     }
 }

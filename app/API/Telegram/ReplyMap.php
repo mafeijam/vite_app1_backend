@@ -18,7 +18,7 @@ class ReplyMap
         return match($key) {
             self::REGISTER, self::INVALID => EmailOTPCommand::class,
             self::VERIFY => VerifyOTPCommand::class,
-            default => null
+            default => $key
         };
     }
 }

@@ -3,7 +3,6 @@
 namespace App\API\Telegram\Commands;
 
 use App\API\Telegram\BaseCommand;
-use Illuminate\Support\Facades\Log;
 
 class HelpCommand extends BaseCommand
 {
@@ -27,8 +26,6 @@ class HelpCommand extends BaseCommand
             ])
         ]);
 
-        Log::channel('debug')->info('bot result', [$result1, $result2]);
-
-        return class_basename($this);
+        return $this->result([$result1, $result2]);
     }
 }

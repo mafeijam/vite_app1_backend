@@ -4,6 +4,7 @@ namespace App\API\Telegram;
 
 use App\API\Telegram\Traits\APIMethodsTrait;
 use App\API\Telegram\Traits\HandleCommandTrait;
+use App\Models\Activity;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 
@@ -17,6 +18,11 @@ class TelegramBot
 
     protected $endpoint = 'https://api.telegram.org/bot';
 
+    protected $handleUpdateTypes = [
+        'message',
+        'callback_query'
+    ];
+
     public function __construct($name = null)
     {
         $this->name = $name ?? config('telegrambot.default');
@@ -25,18 +31,37 @@ class TelegramBot
 
     public function handleUpdate($update)
     {
+        $type = $this->getUpdateType($update);
+
+        Activity::create([
+            'type' => 'telegram webhook update',
+            'data' => $update,
+            'meta' => [
+                'bot' => $this->name,
+                'type' => $type,
+                'from' => $this->getUpdateFrom($update)
+            ]
+        ]);
+
         $command = null;
 
-        $types = ['message', 'callback_query'];
-
-        foreach ($types as $type) {
-            if (array_key_exists($type, $update)) {
-                $update = json_decode(json_encode($update));
-                $command = $this->findCommand($type, $update);
-                break;
-            }
+        if (in_array($type, $this->handleUpdateTypes)) {
+            $update = json_decode(json_encode($update));
+            $command = $this->findCommand($type, $update);
         }
+
         return $command;
+    }
+
+    protected function getUpdateType($update)
+    {
+        $type = Arr::except($update, 'update_id');
+        return key($type);
+    }
+
+    protected function getUpdateFrom($update)
+    {
+        return Arr::get($update, 'message.chat.id') ?? Arr::get($update, 'callback_query.from.id');
     }
 
     protected function getToken()

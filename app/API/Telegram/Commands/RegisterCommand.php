@@ -3,7 +3,7 @@
 namespace App\API\Telegram\Commands;
 
 use App\API\Telegram\BaseCommand;
-use Illuminate\Support\Facades\Log;
+use App\API\Telegram\ReplyMap;
 
 class RegisterCommand extends BaseCommand
 {
@@ -15,14 +15,12 @@ class RegisterCommand extends BaseCommand
     {
         $result = $this->sendMessage([
             'chat_id' => $this->chatId(),
-            'text' => 'please enter your email address',
+            'text' => ReplyMap::REGISTER,
             'reply_markup' => json_encode([
                 'force_reply' => true
             ])
         ]);
 
-        Log::channel('debug')->info('bot result', [$result]);
-
-        return class_basename($this);
+        return $this->result($result, EmailOTPCommand::class);
     }
 }
