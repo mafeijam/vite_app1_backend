@@ -13,13 +13,10 @@ class HelpCommand extends BaseCommand
     public function handle($args)
     {
         $result1 = $this->answerCallbackQuery([
-            'callback_query_id' => $this->queryId(),
             'text' => 'call you back ' . $args
         ]);
 
         $result2 = $this->editMessageText([
-            'chat_id' => $this->chatId(),
-            'message_id' => $this->messageId(),
             'text' => 'helped',
             'reply_markup' => json_encode([
                 'inline_keyboard' => []

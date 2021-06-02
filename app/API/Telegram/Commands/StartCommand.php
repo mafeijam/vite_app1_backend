@@ -13,7 +13,6 @@ class StartCommand extends BaseCommand
     public function handle()
     {
         $result = $this->sendMessage([
-            'chat_id' => $this->chatId(),
             'text' => 'lets get started',
             'reply_markup' => json_encode([
                 'inline_keyboard' => [[

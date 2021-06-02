@@ -11,7 +11,6 @@ class VerifyOTPCommand extends BaseCommand
     public function handle()
     {
         $result = $this->sendMessage([
-            'chat_id' => $this->chatId(),
             'text' => $this->verifyOTP() ? 'verified' : 'failure'
         ]);
 

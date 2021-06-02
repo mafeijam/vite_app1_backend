@@ -38,8 +38,6 @@ class DNSUpdate extends Command
         $oldIP = Cache::get(self::CACHE_KEY);
         $newIP = trim(Http::get('ipapi.io/ip')->body());
 
-        info('cf update', [$oldIP, $newIP]);
-
         return [$oldIP, $newIP];
     }
 

@@ -14,7 +14,6 @@ class RegisterCommand extends BaseCommand
     public function handle()
     {
         $result = $this->sendMessage([
-            'chat_id' => $this->chatId(),
             'text' => ReplyMap::REGISTER,
             'reply_markup' => json_encode([
                 'force_reply' => true

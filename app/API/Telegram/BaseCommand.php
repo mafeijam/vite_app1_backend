@@ -4,6 +4,12 @@ namespace App\API\Telegram;
 
 abstract class BaseCommand
 {
+    protected $methodsWithChatId = [
+        'sendMessage',
+        'sendDocument',
+        'editMessageText'
+    ];
+
     public function __construct(
         protected $update,
         protected TelegramBot $bot
@@ -11,7 +17,8 @@ abstract class BaseCommand
 
     public function chatId()
     {
-        return $this->update->message?->chat->id;
+        return $this->update->message?->chat->id
+            ?? $this->update->callback_query?->from->id;
     }
 
     public function queryId()
@@ -25,11 +32,6 @@ abstract class BaseCommand
             ?? $this->update->callback_query?->message->message_id;
     }
 
-    public function __call($method, $args)
-    {
-        return $this->bot->{$method}(...$args);
-    }
-
     public function result($result, $next = null)
     {
         return [
@@ -40,4 +42,22 @@ abstract class BaseCommand
             'next' => $next
         ];
     }
+
+    public function __call($method, $args)
+    {
+        if (in_array($method, $this->methodsWithChatId) && !isset($args[0]['chat_id'])) {
+            $args[0]['chat_id'] = $this->chatId();
+        }
+
+        if ($method === 'answerCallbackQuery') {
+            $args[0]['callback_query_id'] = $this->queryId();
+        }
+
+        if ($method === 'editMessageText') {
+            $args[0]['message_id'] = $this->messageId();
+        }
+
+        return $this->bot->{$method}(...$args);
+    }
+
 }
