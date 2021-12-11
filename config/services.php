@@ -45,4 +45,6 @@ return [
         'chat_id' => env('TELEGRAM_BOT_CHAT')
     ],
 
+    'stripe' => env('STRIPE_KEY'),
+
 ];

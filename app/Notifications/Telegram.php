@@ -22,9 +22,8 @@ class Telegram extends Notification
 
     public function toTelegram()
     {
-        return TelegramFile::create()
-            ->to('748333103')
-            ->content($this->message)
-            ->document(storage_path('/app/csl.pdf'), 'csl.pdf');
+        return TelegramMessage::create()
+            // ->to('748333103')
+            ->content($this->message);
     }
 }

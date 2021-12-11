@@ -7,6 +7,7 @@
     "require": {
         "php": "^7.3|^8.0",
         "beyondcode/laravel-websockets": "^1.12",
+        "chillerlan/php-qrcode": "^4.3",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
@@ -15,7 +16,8 @@
         "laravel/framework": "^8.12",
         "laravel/sanctum": "^2.10",
         "laravel/tinker": "^2.5",
-        "pusher/pusher-php-server": "^5.0"
+        "pusher/pusher-php-server": "^5.0",
+        "stripe/stripe-php": "^7.94"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

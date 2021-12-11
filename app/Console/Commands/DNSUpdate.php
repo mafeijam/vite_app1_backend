@@ -6,8 +6,10 @@ use App\Notifications\Telegram;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
+use Throwable;
 
 class DNSUpdate extends Command
 {
@@ -116,7 +118,11 @@ class DNSUpdate extends Command
             $do->ok() ? 'ok' : 'fail'
         );
 
-        Notification::route('telegram', config('services.telegram-bot-api.chat_id'))
-            ->notify(new Telegram($msg));
+        try {
+            Notification::route('telegram', config('services.telegram-bot-api.chat_id'))
+                ->notify(new Telegram($msg));
+        } catch (Throwable $t) {
+            Log::channel('debug')->info('failed to notify ip updated', [$t->__toString()]);
+        }
     }
 }
