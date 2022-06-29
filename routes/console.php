@@ -23,7 +23,7 @@ Artisan::command('init', function () {
 
 Artisan::command('test', function () {
     User::find(1)->notify(new TestNotification);
-    event(new TestEvent);
+    // event(new TestEvent);
 });
 
 Artisan::command('telegram', function () {
