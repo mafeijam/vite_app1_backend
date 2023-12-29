@@ -24,7 +24,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('dns:update')->hourly();
+        $schedule->command('dns:update')->everyFifteenMinutes();
+        // $schedule->command('cx:check')->everyThirtyMinutes();
     }
 
     /**

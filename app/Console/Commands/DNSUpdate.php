@@ -2,17 +2,15 @@
 
 namespace App\Console\Commands;
 
-use App\Notifications\Telegram;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
-use Throwable;
 
 class DNSUpdate extends Command
 {
+    use NotifyTrait;
+
     protected $signature = 'dns:update';
 
     protected $description = 'Update Cloudflare DNS And Digital Ocean Firewall';
@@ -30,9 +28,11 @@ class DNSUpdate extends Command
 
         $cf = $this->updateCloudflare($oldIP, $newIP);
 
-        $do = $this->updateDigitalOcean($newIP);
+        // $do = $this->updateDigitalOcean($newIP);
 
-        $this->notifyMe($oldIP, $newIP, $cf, $do);
+        $msg = $this->getMsg($oldIP, $newIP, $cf);
+
+        $this->notifyMe($msg);
     }
 
     protected function getIPs()
@@ -108,21 +108,13 @@ class DNSUpdate extends Command
         ];
     }
 
-    protected function notifyMe($oldIP, $newIP, $cf, $do)
+    protected function getMsg($oldIP, $newIP, $cf)
     {
-        $msg = sprintf(
-            'ip updated from [%s] to [%s], cf status %s, do status %s',
+       return sprintf(
+            'ip updated from [%s] to [%s], cf status %s',
             $oldIP,
             $newIP,
-            $cf->ok() ? 'ok' : 'fail',
-            $do->ok() ? 'ok' : 'fail'
+            $cf->ok() ? 'ok' : 'fail'
         );
-
-        try {
-            Notification::route('telegram', config('services.telegram-bot-api.chat_id'))
-                ->notify(new Telegram($msg));
-        } catch (Throwable $t) {
-            Log::channel('debug')->info('failed to notify ip updated', [$t->__toString()]);
-        }
     }
 }
